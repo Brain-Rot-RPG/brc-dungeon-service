@@ -9,7 +9,7 @@ servers:
 #  - url: https://dungeon-service:4003/api/v1
 #    description: Production server
 paths:
-  /dungeons:
+  /dungeon:
     get:
       summary: Get all dungeons
       tags:
@@ -46,7 +46,7 @@ paths:
           description: Invalid input
         '500':
           description: Internal server error
-  /dungeons/{id}:
+  /dungeon/{id}:
     get:
       summary: Get a specific dungeon by ID
       tags:
