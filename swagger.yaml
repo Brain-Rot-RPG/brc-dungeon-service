@@ -1,0 +1,134 @@
+openapi: 3.0.0
+info:
+  title: Dungeon Service API
+  description: API for managing dungeons
+  version: 1.0.0
+servers:
+  - url: http://localhost:4003/api/v1
+    description: Local development server
+#  - url: https://dungeon-service:4003/api/v1
+#    description: Production server
+paths:
+  /dungeons:
+    get:
+      summary: Get all dungeons
+      tags:
+        - Dungeons
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dungeon'
+        '500':
+          description: Internal server error
+    post:
+      summary: Create a new dungeon
+      tags:
+        - Dungeons
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DungeonInput'
+      responses:
+        '201':
+          description: Dungeon created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dungeon'
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+  /dungeons/{id}:
+    get:
+      summary: Get a specific dungeon by ID
+      tags:
+        - Dungeons
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the dungeon to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dungeon'
+        '404':
+          description: Dungeon not found
+        '500':
+          description: Internal server error
+    delete:
+      summary: Delete a dungeon
+      tags:
+        - Dungeons
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the dungeon to delete
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Dungeon deleted successfully
+        '404':
+          description: Dungeon not found
+        '500':
+          description: Internal server error
+components:
+  schemas:
+    Dungeon:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the dungeon
+        enemies:
+          type: object
+          description: Map of enemy IDs to positions
+          additionalProperties:
+            type: string
+            description: Position ID
+        items:
+          type: object
+          description: Map of item IDs to positions
+          additionalProperties:
+            type: array
+            items:
+              type: string
+              description: Position ID
+        paths:
+          type: object
+          description: Map of positions to adjacent positions
+          additionalProperties:
+            type: array
+            items:
+              type: string
+              description: Position ID
+      required:
+        - id
+        - enemies
+        - items
+        - paths
+    DungeonInput:
+      type: object
+      properties:
+        seed:
+          type: string
+          description: Optional seed used for deterministic generation
+        size:
+          type: integer
+          description: Optional dungeon size/complexity parameter
+          minimum: 1
