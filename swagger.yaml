@@ -81,7 +81,7 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        '200':
           description: Dungeon deleted successfully
         '404':
           description: Dungeon not found

@@ -67,7 +67,7 @@ export function createDungeonRoutes(service: DungeonService): Router {
         return;
       }
 
-      res.status(204).send();
+      res.status(200).json({ deleted: true });
     } catch (error) {
       console.error("Error deleting dungeon:", error);
       res.status(500).json({ error: "Internal server error" });

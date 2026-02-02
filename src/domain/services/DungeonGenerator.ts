@@ -119,7 +119,8 @@ export class DungeonGenerator {
   static spawnItems(
     paths: Record<string, string[]>,
     difficulty: "easy" | "medium" | "hard",
-    itemIds: string[]
+    itemIds: string[],
+    occupiedPositions: Set<string>
   ): Record<string, string[]> {
     const config = DIFFICULTY_CONFIGS[difficulty];
     const items: Record<string, string[]> = {};
@@ -131,14 +132,18 @@ export class DungeonGenerator {
     );
 
     for (const pos of spawnPositions) {
+      if (occupiedPositions.has(pos)) {
+        continue;
+      }
       const rand = Math.random();
       if (rand < config.itemSpawnRate) {
-        if (!items[pos]) {
-          items[pos] = [];
-        }
         // Pick random item ID from database
         const randomItemId = itemIds[Math.floor(Math.random() * itemIds.length)];
-        items[pos].push(randomItemId);
+        if (!items[randomItemId]) {
+          items[randomItemId] = [];
+        }
+        items[randomItemId].push(pos);
+        occupiedPositions.add(pos);
       }
     }
 

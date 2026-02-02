@@ -30,9 +30,9 @@ describe("PostgresDungeonRepository", () => {
           seed: "seed1",
           size: 5,
           difficulty: "easy" as const,
-          enemies: JSON.stringify({ enemy1: "pos1" }),
-          items: JSON.stringify({ item1: ["pos2"] }),
-          paths: JSON.stringify({ start: ["pos1"] }),
+          enemies: { enemy1: ["pos1"] },
+          items: { item1: ["pos2"] },
+          paths: { start: ["pos1"] },
           created_at: new Date("2026-01-01"),
         },
       ];
@@ -46,7 +46,7 @@ describe("PostgresDungeonRepository", () => {
       );
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe("dung1");
-      expect(result[0].enemies).toEqual({ enemy1: "pos1" });
+      expect(result[0].enemies).toEqual({ enemy1: ["pos1"] });
     });
   });
 
@@ -57,9 +57,9 @@ describe("PostgresDungeonRepository", () => {
         seed: "seed1",
         size: 8,
         difficulty: "medium" as const,
-        enemies: JSON.stringify({ enemy1: "pos1" }),
-        items: JSON.stringify({ item1: ["pos2"] }),
-        paths: JSON.stringify({ start: ["pos1"] }),
+        enemies: { enemy1: ["pos1"] },
+        items: { item1: ["pos2"] },
+        paths: { start: ["pos1"] },
         created_at: new Date("2026-01-01"),
       };
 
@@ -88,9 +88,9 @@ describe("PostgresDungeonRepository", () => {
         seed: "custom-seed",
         size: 10,
         difficulty: "hard" as const,
-        enemies: JSON.stringify({}),
-        items: JSON.stringify({}),
-        paths: JSON.stringify({}),
+        enemies: {},
+        items: {},
+        paths: {},
         created_at: new Date("2026-01-01"),
       };
 

@@ -24,8 +24,21 @@ export class DungeonService {
 
     // Generate dungeon structure with real IDs
     const paths = DungeonGenerator.generatePaths(input.size);
-    const enemies = DungeonGenerator.spawnEnemies(paths, input.difficulty, normalBrainrots, bossBrainrots);
-    const items = DungeonGenerator.spawnItems(paths, input.difficulty, itemIds);
+    const enemies = DungeonGenerator.spawnEnemies(
+      paths,
+      input.difficulty,
+      normalBrainrots,
+      bossBrainrots
+    );
+    const occupiedPositions = new Set<string>(
+      Object.values(enemies).flat()
+    );
+    const items = DungeonGenerator.spawnItems(
+      paths,
+      input.difficulty,
+      itemIds,
+      occupiedPositions
+    );
 
     return this.repository.create({
       seed,
@@ -46,7 +59,7 @@ export class DungeonService {
       // Use service name for Docker networking, fallback to localhost for local dev
       const host = process.env.BRAINROT_SERVICE_HOST || "localhost";
       const port = process.env.BRAINROT_SERVICE_PORT || "4001";
-      const response = await fetch(`http://${host}:${port}/brainrots`);
+      const response = await fetch(`http://${host}:${port}/api/v1/brainrot`);
       const data = await response.json();
       const brainrots = Array.isArray(data) ? data : [];
       
@@ -74,7 +87,7 @@ export class DungeonService {
       // Use service name for Docker networking, fallback to localhost for local dev
       const host = process.env.ITEM_SERVICE_HOST || "localhost";
       const port = process.env.ITEM_SERVICE_PORT || "4009";
-      const response = await fetch(`http://${host}:${port}/items`);
+      const response = await fetch(`http://${host}:${port}/api/v1/item`);
       const data = await response.json();
       const items = Array.isArray(data) ? data : [];
       
