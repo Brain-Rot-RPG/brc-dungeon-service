@@ -3,6 +3,19 @@ import { DungeonRepository } from "../../domain/repositories/DungeonRepository";
 import { DungeonGenerator } from "../../domain/services/DungeonGenerator";
 import { v4 as uuidv4 } from "uuid";
 
+interface BrainrotResponse {
+  id: string;
+  name: string;
+  isBoss: boolean;
+}
+
+interface ItemResponse {
+  id: string;
+  name: string;
+  effect: Record<string, number>;
+  price: number;
+}
+
 export class DungeonService {
   constructor(private readonly repository: DungeonRepository) {}
 
@@ -61,18 +74,22 @@ export class DungeonService {
       const port = process.env.BRAINROT_SERVICE_PORT || "4001";
       const response = await fetch(`http://${host}:${port}/api/v1/brainrot`);
       const data = await response.json();
-      const brainrots = Array.isArray(data) ? data : [];
+      const brainrots = Array.isArray(data) ? (data as BrainrotResponse[]) : [];
       
+      // eslint-disable-next-line no-console
       console.log("[DungeonService] Fetched brainrots from database:", JSON.stringify(brainrots, null, 2));
       
-      const normalBrainrots = brainrots.filter((b: any) => !b.isBoss).map((b: any) => b.id);
-      const bossBrainrots = brainrots.filter((b: any) => b.isBoss).map((b: any) => b.id);
+      const normalBrainrots = brainrots.filter((b) => !b.isBoss).map((b) => b.id);
+      const bossBrainrots = brainrots.filter((b) => b.isBoss).map((b) => b.id);
       
+      // eslint-disable-next-line no-console
       console.log(`[DungeonService] Filtered ${normalBrainrots.length} normal brainrots:`, normalBrainrots);
+      // eslint-disable-next-line no-console
       console.log(`[DungeonService] Filtered ${bossBrainrots.length} boss brainrots:`, bossBrainrots);
       
       return { normalBrainrots, bossBrainrots };
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Error fetching brainrot IDs:", error);
       // Fallback to hardcoded IDs if service is unavailable
       return {
@@ -89,15 +106,18 @@ export class DungeonService {
       const port = process.env.ITEM_SERVICE_PORT || "4009";
       const response = await fetch(`http://${host}:${port}/api/v1/item`);
       const data = await response.json();
-      const items = Array.isArray(data) ? data : [];
+      const items = Array.isArray(data) ? (data as ItemResponse[]) : [];
       
+      // eslint-disable-next-line no-console
       console.log("[DungeonService] Fetched items from database:", JSON.stringify(items, null, 2));
       
-      const itemIds = items.map((i: any) => i.id);
+      const itemIds = items.map((i) => i.id);
+      // eslint-disable-next-line no-console
       console.log(`[DungeonService] Extracted ${itemIds.length} item IDs:`, itemIds);
       
       return itemIds;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Error fetching item IDs:", error);
       // Fallback to hardcoded IDs if service is unavailable
       return ["1", "2", "3"];

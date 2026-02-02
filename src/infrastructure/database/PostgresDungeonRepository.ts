@@ -7,9 +7,9 @@ interface DungeonRow {
   seed: string;
   size: number;
   difficulty: "easy" | "medium" | "hard";
-  enemies: any;
-  items: any;
-  paths: any;
+  enemies: Record<string, string[]>;
+  items: Record<string, string[]>;
+  paths: Record<string, string[]>;
   created_at: Date;
 }
 

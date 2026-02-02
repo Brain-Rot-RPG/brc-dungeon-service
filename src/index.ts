@@ -18,5 +18,6 @@ const service = new DungeonService(repository);
 const app = createApp(service);
 
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`Dungeon service listening on port ${PORT}`);
 });
