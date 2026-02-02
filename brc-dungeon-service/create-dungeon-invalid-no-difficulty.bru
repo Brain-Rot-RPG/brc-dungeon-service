@@ -1,0 +1,27 @@
+meta {
+  name: Create Dungeon - Invalid (No Difficulty)
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:4003/api/v1/dungeon
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "size": 10
+  }
+}
+
+tests {
+  test("status should be 400", function() {
+    expect(res.status).to.equal(400);
+  });
+  
+  test("should return error message", function() {
+    expect(res.body.error).to.include('difficulty');
+  });
+}

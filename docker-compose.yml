@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: brc_dungeon
+      POSTGRES_USER: brc_dungeon_user
+      POSTGRES_PASSWORD: brc_dungeon_password
+    ports:
+      - "5403:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U brc_dungeon_user -d brc_dungeon"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dungeon-service:
+    build: .
+    environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGDATABASE: brc_dungeon
+      PGUSER: brc_dungeon_user
+      PGPASSWORD: brc_dungeon_password
+      PORT: 4003
+      BRAINROT_SERVICE_HOST: host.docker.internal
+      BRAINROT_SERVICE_PORT: 4001
+      ITEM_SERVICE_HOST: host.docker.internal
+      ITEM_SERVICE_PORT: 4009
+    ports:
+      - "4003:4003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

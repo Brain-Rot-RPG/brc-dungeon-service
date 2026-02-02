@@ -1,0 +1,37 @@
+meta {
+  name: Create Dungeon - Hard
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:4003/api/v1/dungeon
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "size": 15,
+    "difficulty": "hard"
+  }
+}
+
+tests {
+  test("status should be 201", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("should have hard difficulty", function() {
+    expect(res.body.difficulty).to.equal('hard');
+  });
+  
+  test("should have size 15", function() {
+    expect(res.body.size).to.equal(15);
+  });
+  
+  test("should have more enemies than easy", function() {
+    const enemyCount = Object.keys(res.body.enemies).length;
+    expect(enemyCount).to.be.greaterThan(5);
+  });
+}

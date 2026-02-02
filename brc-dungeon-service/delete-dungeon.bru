@@ -1,0 +1,33 @@
+meta {
+  name: Delete Dungeon
+  type: http
+  seq: 8
+}
+
+delete {
+  url: http://localhost:4003/api/v1/dungeon/{{dungeonId}}
+  body: none
+  auth: none
+}
+
+vars:pre-request {
+  dungeonId: t1q9fdj24
+}
+
+tests {
+  test("status should be 204 or 404", function() {
+    expect([204, 404]).to.include(res.status);
+  });
+  
+  test("if successful, should have no body", function() {
+    if (res.status === 204) {
+      expect(res.body).to.be.undefined;
+    }
+  });
+  
+  test("if not found, should return error", function() {
+    if (res.status === 404) {
+      expect(res.body.error).to.be.a('string');
+    }
+  });
+}

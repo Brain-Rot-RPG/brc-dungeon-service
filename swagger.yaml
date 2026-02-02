@@ -95,12 +95,17 @@ components:
         id:
           type: string
           description: Unique identifier of the dungeon
+        seed:
+          type: string
+          description: Seed used for deterministic generation
         enemies:
           type: object
-          description: Map of enemy IDs to positions
+          description: Map of enemy IDs to array of positions
           additionalProperties:
-            type: string
-            description: Position ID
+            type: array
+            items:
+              type: string
+              description: Position ID
         items:
           type: object
           description: Map of item IDs to positions
@@ -119,6 +124,7 @@ components:
               description: Position ID
       required:
         - id
+        - seed
         - enemies
         - items
         - paths
@@ -132,3 +138,10 @@ components:
           type: integer
           description: Optional dungeon size/complexity parameter
           minimum: 1
+        difficulty:
+          type: string
+          description: Optional dungeon difficulty
+          enum:
+            - easy
+            - medium
+            - hard

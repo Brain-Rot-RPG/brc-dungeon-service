@@ -1,0 +1,41 @@
+meta {
+  name: Create Dungeon - Easy
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:4003/api/v1/dungeon
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "size": 10,
+    "difficulty": "easy"
+  }
+}
+
+tests {
+  test("status should be 201", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("should have id", function() {
+    expect(res.body.id).to.be.a('string');
+  });
+  
+  test("should have seed", function() {
+    expect(res.body.seed).to.be.a('string');
+  });
+  
+  test("should have paths", function() {
+    expect(res.body.paths).to.be.an('object');
+    expect(res.body.paths.start).to.be.an('array');
+  });
+  
+  test("should have boss_final enemy", function() {
+    expect(res.body.enemies.boss_final).to.equal('boss_arena');
+  });
+}

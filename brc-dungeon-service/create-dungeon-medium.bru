@@ -1,0 +1,37 @@
+meta {
+  name: Create Dungeon - Medium with Seed
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:4003/api/v1/dungeon
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "seed": "my-custom-seed-123",
+    "size": 8,
+    "difficulty": "medium"
+  }
+}
+
+tests {
+  test("status should be 201", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("should use custom seed", function() {
+    expect(res.body.seed).to.equal('my-custom-seed-123');
+  });
+  
+  test("should have size 8", function() {
+    expect(res.body.size).to.equal(8);
+  });
+  
+  test("should have medium difficulty", function() {
+    expect(res.body.difficulty).to.equal('medium');
+  });
+}
