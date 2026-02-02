@@ -65,6 +65,11 @@ export class DungeonGenerator {
       converging = nextConverging;
     }
 
+    // Ensure boss_arena exists in paths with empty array (final destination)
+    if (!paths["boss_arena"]) {
+      paths["boss_arena"] = [];
+    }
+
     return paths;
   }
 
