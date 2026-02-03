@@ -70,16 +70,8 @@ export class DungeonService {
       const result = await pool.query("SELECT id, is_boss FROM brainrots ORDER BY id");
       const brainrots = result.rows as Array<{ id: number; is_boss: boolean }>;
 
-      // eslint-disable-next-line no-console
-      console.log("[DungeonService] Fetched brainrots from database:", JSON.stringify(brainrots, null, 2));
-
       const normalBrainrots = brainrots.filter((b) => !b.is_boss).map((b) => String(b.id));
       const bossBrainrots = brainrots.filter((b) => b.is_boss).map((b) => String(b.id));
-
-      // eslint-disable-next-line no-console
-      console.log(`[DungeonService] Filtered ${normalBrainrots.length} normal brainrots:`, normalBrainrots);
-      // eslint-disable-next-line no-console
-      console.log(`[DungeonService] Filtered ${bossBrainrots.length} boss brainrots:`, bossBrainrots);
 
       await pool.end();
 
@@ -110,13 +102,7 @@ export class DungeonService {
       const result = await pool.query("SELECT id FROM items ORDER BY id");
       const items = result.rows as Array<{ id: number }>;
 
-      // eslint-disable-next-line no-console
-      console.log("[DungeonService] Fetched items from database:", JSON.stringify(items, null, 2));
-
       const itemIds = items.map((i) => String(i.id));
-      // eslint-disable-next-line no-console
-      console.log(`[DungeonService] Extracted ${itemIds.length} item IDs:`, itemIds);
-
       await pool.end();
 
       return itemIds;
