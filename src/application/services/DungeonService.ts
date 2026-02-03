@@ -2,19 +2,7 @@ import { Dungeon, DungeonInput } from "../../domain/entities/Dungeon";
 import { DungeonRepository } from "../../domain/repositories/DungeonRepository";
 import { DungeonGenerator } from "../../domain/services/DungeonGenerator";
 import { v4 as uuidv4 } from "uuid";
-
-interface BrainrotResponse {
-  id: string;
-  name: string;
-  isBoss: boolean;
-}
-
-interface ItemResponse {
-  id: string;
-  name: string;
-  effect: Record<string, number>;
-  price: number;
-}
+import { Pool } from "pg";
 
 export class DungeonService {
   constructor(private readonly repository: DungeonRepository) {}
@@ -69,24 +57,32 @@ export class DungeonService {
 
   private async fetchBrainrotIds(): Promise<{ normalBrainrots: string[]; bossBrainrots: string[] }> {
     try {
-      // Use service name for Docker networking, fallback to localhost for local dev
-      const host = process.env.BRAINROT_SERVICE_HOST || "localhost";
-      const port = process.env.BRAINROT_SERVICE_PORT || "4001";
-      const response = await fetch(`http://${host}:${port}/api/v1/brainrot`);
-      const data = await response.json();
-      const brainrots = Array.isArray(data) ? (data as BrainrotResponse[]) : [];
-      
+      const host = process.env.BRAINROT_DB_HOST || "localhost";
+      const port = process.env.BRAINROT_DB_PORT || "5401";
+      const pool = new Pool({
+        host,
+        port: parseInt(port, 10),
+        database: "brc_brainrot",
+        user: "brc_brainrot_user",
+        password: "brc_brainrot_password",
+      });
+
+      const result = await pool.query("SELECT id, is_boss FROM brainrots ORDER BY id");
+      const brainrots = result.rows as Array<{ id: number; is_boss: boolean }>;
+
       // eslint-disable-next-line no-console
       console.log("[DungeonService] Fetched brainrots from database:", JSON.stringify(brainrots, null, 2));
-      
-      const normalBrainrots = brainrots.filter((b) => !b.isBoss).map((b) => b.id);
-      const bossBrainrots = brainrots.filter((b) => b.isBoss).map((b) => b.id);
-      
+
+      const normalBrainrots = brainrots.filter((b) => !b.is_boss).map((b) => String(b.id));
+      const bossBrainrots = brainrots.filter((b) => b.is_boss).map((b) => String(b.id));
+
       // eslint-disable-next-line no-console
       console.log(`[DungeonService] Filtered ${normalBrainrots.length} normal brainrots:`, normalBrainrots);
       // eslint-disable-next-line no-console
       console.log(`[DungeonService] Filtered ${bossBrainrots.length} boss brainrots:`, bossBrainrots);
-      
+
+      await pool.end();
+
       return { normalBrainrots, bossBrainrots };
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -101,20 +97,28 @@ export class DungeonService {
 
   private async fetchItemIds(): Promise<string[]> {
     try {
-      // Use service name for Docker networking, fallback to localhost for local dev
-      const host = process.env.ITEM_SERVICE_HOST || "localhost";
-      const port = process.env.ITEM_SERVICE_PORT || "4009";
-      const response = await fetch(`http://${host}:${port}/api/v1/item`);
-      const data = await response.json();
-      const items = Array.isArray(data) ? (data as ItemResponse[]) : [];
-      
+      const host = process.env.ITEM_DB_HOST || "localhost";
+      const port = process.env.ITEM_DB_PORT || "5409";
+      const pool = new Pool({
+        host,
+        port: parseInt(port, 10),
+        database: "brc_item",
+        user: "brc_item_user",
+        password: "brc_item_password",
+      });
+
+      const result = await pool.query("SELECT id FROM items ORDER BY id");
+      const items = result.rows as Array<{ id: number }>;
+
       // eslint-disable-next-line no-console
       console.log("[DungeonService] Fetched items from database:", JSON.stringify(items, null, 2));
-      
-      const itemIds = items.map((i) => i.id);
+
+      const itemIds = items.map((i) => String(i.id));
       // eslint-disable-next-line no-console
       console.log(`[DungeonService] Extracted ${itemIds.length} item IDs:`, itemIds);
-      
+
+      await pool.end();
+
       return itemIds;
     } catch (error) {
       // eslint-disable-next-line no-console
