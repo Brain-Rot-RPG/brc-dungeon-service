@@ -12,13 +12,13 @@ class InMemoryDungeonRepository implements DungeonRepository {
     return this.dungeons;
   }
 
-  async getById(id: string): Promise<Dungeon | null> {
+  async getById(id: number): Promise<Dungeon | null> {
     return this.dungeons.find((d) => d.id === id) ?? null;
   }
 
   async create(input: Omit<Dungeon, "id" | "createdAt">): Promise<Dungeon> {
     const created: Dungeon = {
-      id: `dungeon_${this.dungeons.length + 1}`,
+      id: this.dungeons.length + 1,
       createdAt: new Date("2026-01-01T00:00:00Z"),
       ...input,
     };
@@ -26,7 +26,7 @@ class InMemoryDungeonRepository implements DungeonRepository {
     return created;
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: number): Promise<boolean> {
     const before = this.dungeons.length;
     this.dungeons = this.dungeons.filter((d) => d.id !== id);
     return this.dungeons.length < before;
@@ -240,7 +240,7 @@ describe("DungeonService", () => {
     });
 
     it("returns null when dungeon does not exist", async () => {
-      const found = await service.getById("non-existent");
+      const found = await service.getById(999);
       expect(found).toBeNull();
     });
   });
@@ -260,7 +260,7 @@ describe("DungeonService", () => {
     });
 
     it("returns false when deleting non-existent dungeon", async () => {
-      const deleted = await service.delete("non-existent");
+      const deleted = await service.delete(999);
       expect(deleted).toBe(false);
     });
   });

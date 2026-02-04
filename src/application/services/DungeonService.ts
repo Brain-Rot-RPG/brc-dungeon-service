@@ -11,7 +11,7 @@ export class DungeonService {
     return this.repository.getAll();
   }
 
-  async getById(id: string): Promise<Dungeon | null> {
+  async getById(id: number): Promise<Dungeon | null> {
     return this.repository.getById(id);
   }
 
@@ -51,7 +51,7 @@ export class DungeonService {
     });
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: number): Promise<boolean> {
     return this.repository.delete(id);
   }
 

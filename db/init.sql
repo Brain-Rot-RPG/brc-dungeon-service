@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS dungeons (
-  id VARCHAR(255) PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   seed VARCHAR(255) NOT NULL,
   size INTEGER NOT NULL,
   difficulty VARCHAR(20) NOT NULL CHECK (difficulty IN ('easy', 'medium', 'hard')),

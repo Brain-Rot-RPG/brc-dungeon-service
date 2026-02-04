@@ -42,7 +42,11 @@ export function createDungeonRoutes(service: DungeonService): Router {
 
   router.get("/dungeon/:id", async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      const id = Number.parseInt(req.params.id, 10);
+      if (Number.isNaN(id)) {
+        res.status(400).json({ error: "id must be an integer" });
+        return;
+      }
       const dungeon = await service.getById(id);
 
       if (!dungeon) {
@@ -59,7 +63,11 @@ export function createDungeonRoutes(service: DungeonService): Router {
 
   router.delete("/dungeon/:id", async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      const id = Number.parseInt(req.params.id, 10);
+      if (Number.isNaN(id)) {
+        res.status(400).json({ error: "id must be an integer" });
+        return;
+      }
       const deleted = await service.delete(id);
 
       if (!deleted) {

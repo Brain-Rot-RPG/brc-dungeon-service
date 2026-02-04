@@ -1,5 +1,5 @@
 export interface Dungeon {
-  id: string;
+  id: number;
   seed: string;
   size: number;
   difficulty: "easy" | "medium" | "hard";

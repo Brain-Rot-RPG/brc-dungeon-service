@@ -3,7 +3,7 @@ import { Dungeon } from "../../domain/entities/Dungeon";
 import { DungeonRepository } from "../../domain/repositories/DungeonRepository";
 
 interface DungeonRow {
-  id: string;
+  id: number;
   seed: string;
   size: number;
   difficulty: "easy" | "medium" | "hard";
@@ -23,7 +23,7 @@ export class PostgresDungeonRepository implements DungeonRepository {
     return result.rows.map(this.mapRow);
   }
 
-  async getById(id: string): Promise<Dungeon | null> {
+  async getById(id: number): Promise<Dungeon | null> {
     const result: QueryResult<DungeonRow> = await this.pool.query(
       "SELECT * FROM dungeons WHERE id = $1",
       [id]
@@ -39,11 +39,9 @@ export class PostgresDungeonRepository implements DungeonRepository {
   async create(
     input: Omit<Dungeon, "id" | "createdAt">
   ): Promise<Dungeon> {
-    const id = Math.random().toString(36).substr(2, 9);
     const result: QueryResult<DungeonRow> = await this.pool.query(
-      "INSERT INTO dungeons (id, seed, size, difficulty, enemies, items, paths) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      "INSERT INTO dungeons (seed, size, difficulty, enemies, items, paths) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [
-        id,
         input.seed,
         input.size,
         input.difficulty,
@@ -56,7 +54,7 @@ export class PostgresDungeonRepository implements DungeonRepository {
     return this.mapRow(result.rows[0]);
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: number): Promise<boolean> {
     const result = await this.pool.query("DELETE FROM dungeons WHERE id = $1", [
       id,
     ]);

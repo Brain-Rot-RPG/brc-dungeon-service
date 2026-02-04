@@ -26,7 +26,7 @@ describe("PostgresDungeonRepository", () => {
     it("returns all dungeons from database", async () => {
       const mockRows = [
         {
-          id: "dung1",
+          id: 1,
           seed: "seed1",
           size: 5,
           difficulty: "easy" as const,
@@ -45,7 +45,7 @@ describe("PostgresDungeonRepository", () => {
         "SELECT * FROM dungeons ORDER BY created_at DESC"
       );
       expect(result).toHaveLength(1);
-      expect(result[0].id).toBe("dung1");
+      expect(result[0].id).toBe(1);
       expect(result[0].enemies).toEqual({ enemy1: ["pos1"] });
     });
   });
@@ -53,7 +53,7 @@ describe("PostgresDungeonRepository", () => {
   describe("getById", () => {
     it("returns dungeon when found", async () => {
       const mockRow = {
-        id: "dung1",
+        id: 1,
         seed: "seed1",
         size: 8,
         difficulty: "medium" as const,
@@ -65,17 +65,17 @@ describe("PostgresDungeonRepository", () => {
 
       mockQuery.mockResolvedValueOnce({ rows: [mockRow], rowCount: 1 });
 
-      const result = await repository.getById("dung1");
+      const result = await repository.getById(1);
 
       expect(result).not.toBeNull();
-      expect(result?.id).toBe("dung1");
+      expect(result?.id).toBe(1);
       expect(result?.size).toBe(8);
     });
 
     it("returns null when dungeon not found", async () => {
       mockQuery.mockResolvedValueOnce({ rows: [], rowCount: 0 });
 
-      const result = await repository.getById("non-existent");
+      const result = await repository.getById(999);
 
       expect(result).toBeNull();
     });
@@ -84,7 +84,7 @@ describe("PostgresDungeonRepository", () => {
   describe("create", () => {
     it("creates a dungeon and returns it", async () => {
       const mockRow = {
-        id: expect.any(String),
+        id: 1,
         seed: "custom-seed",
         size: 10,
         difficulty: "hard" as const,
@@ -108,6 +108,7 @@ describe("PostgresDungeonRepository", () => {
       expect(result.seed).toBe("custom-seed");
       expect(result.size).toBe(10);
       expect(result.difficulty).toBe("hard");
+      expect(result.id).toBe(1);
     });
   });
 
@@ -115,7 +116,7 @@ describe("PostgresDungeonRepository", () => {
     it("returns true when dungeon is deleted", async () => {
       mockQuery.mockResolvedValueOnce({ rowCount: 1 });
 
-      const result = await repository.delete("dung1");
+      const result = await repository.delete(1);
 
       expect(result).toBe(true);
     });
@@ -123,7 +124,7 @@ describe("PostgresDungeonRepository", () => {
     it("returns false when dungeon not found", async () => {
       mockQuery.mockResolvedValueOnce({ rowCount: 0 });
 
-      const result = await repository.delete("non-existent");
+      const result = await repository.delete(999);
 
       expect(result).toBe(false);
     });

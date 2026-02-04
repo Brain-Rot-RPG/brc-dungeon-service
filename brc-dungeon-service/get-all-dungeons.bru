@@ -22,7 +22,7 @@ tests {
   test("each dungeon should have required fields", function() {
     if (res.body.length > 0) {
       const dungeon = res.body[0];
-      expect(dungeon.id).to.be.a('string');
+      expect(dungeon.id).to.be.a('number');
       expect(dungeon.seed).to.be.a('string');
       expect(dungeon.size).to.be.a('number');
       expect(dungeon.difficulty).to.be.a('string');
